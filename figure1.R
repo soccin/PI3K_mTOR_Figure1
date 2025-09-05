@@ -7,7 +7,7 @@ source("R/load_gistic_data.R")
 source("R/utils.R")
 
 # Configuration constants
-OUTPUT_FILE <- paste0("figure1_", get_git_label(), ".pdf")
+OUTPUT_FILE <- paste0("fig1_", get_git_label(), ".pdf")
 Q_VALUE_THRESHOLD <- 0.1
 TOP_PEAKS_COUNT <- 15
 PLOT_HEIGHT <- 11
