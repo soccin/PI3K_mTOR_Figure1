@@ -4,11 +4,12 @@ library(ggrepel)
 library(patchwork)
 
 source("R/load_gistic_data.R")
+source("R/utils.R")
 
 # Configuration constants
 GISTIC_FILE <- "iClust_1_scores.gistic"
 PEAKS_FILE <- "iClust1Peaks.csv"
-OUTPUT_FILE <- "test02.pdf"
+OUTPUT_FILE <- paste0("figure1_", get_git_label(), ".pdf")
 Q_VALUE_THRESHOLD <- 0.1
 TOP_PEAKS_COUNT <- 15
 PLOT_HEIGHT <- 11
