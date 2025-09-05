@@ -4,14 +4,14 @@ suppressPackageStartupMessages({
 })
 
 #' Load human genome hg19 chromosome information
-#' 
+#'
 #' Reads chromosome sizes from hg19.chrom.sizes file and calculates
 #' cumulative genomic offsets for plotting genome-wide coordinates.
-#' 
+#'
 #' @return Data frame with chromosome names, genomic offsets, and lengths
 load_genome_info <- function() {
   hg19_chroms <- c(1:22, "X", "Y", "M")
-  
+
   read_tsv(
     "hg19.chrom.sizes",
     col_names = c("chromosome", "len"),

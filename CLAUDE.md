@@ -45,7 +45,7 @@ Or run specific functions:
 ```r
 # Load libraries and source functions
 library(tidyverse)
-library(ggrepel) 
+library(ggrepel)
 library(patchwork)
 source("R/load_gistic_data.R")
 
@@ -64,7 +64,7 @@ The script outputs `test02.pdf` containing the combined amplification plot with 
 The code is now organized into clean, modular functions:
 
 - `load_and_process_data()`: Handles all data loading, processing, and filtering
-- `create_amplification_plot()`: Creates the GISTIC amplification step plot 
+- `create_amplification_plot()`: Creates the GISTIC amplification step plot
 - `create_label_plot()`: Creates the peak labels plot with optimized text repel
 - `create_figure1()`: Combines plots and handles PDF output
 - `main()`: Entry point function
@@ -89,3 +89,9 @@ The code is now organized into clean, modular functions:
 - Do NOT use emoji in commit messages, code comments, documentation, or any files
 - Keep all text professional and emoji-free
 - This applies to all development work in this repository
+
+**WHITESPACE MANAGEMENT**
+- Remove trailing unnecessary whitespace at the end of all lines
+- Keep codebase clean to avoid version control noise
+- Apply to all R scripts, documentation, and text files
+- CAUTION: Use precise whitespace removal to avoid truncating legitimate text
