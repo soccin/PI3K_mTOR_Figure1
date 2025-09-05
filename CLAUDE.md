@@ -82,3 +82,10 @@ The code is now organized into clean, modular functions:
 - Plot margins and spacing are carefully tuned for publication quality
 - Uses `coord_flip()` to create vertical genome plots with chromosomes ordered top to bottom
 - The `get_script_dir()` function referenced in load_gistic_data.R appears to be missing but the code structure suggests it should resolve to the project root
+
+## Style Guidelines
+
+**IMPORTANT: NO EMOJI USAGE**
+- Do NOT use emoji in commit messages, code comments, documentation, or any files
+- Keep all text professional and emoji-free
+- This applies to all development work in this repository
