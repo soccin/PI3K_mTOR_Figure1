@@ -1,2 +1,45 @@
+# R project specific
 attic
 *.pdf
+_Rhistory_*
+
+# R session data and history
+.RData
+.Rhistory
+.Rproj.user/
+
+# R temporary files
+*.Rout
+*.Rcheck/
+*.tar.gz
+
+# R package development
+man/
+NAMESPACE
+inst/doc/
+
+# IDE and editor files
+.Rproj
+*.Rproj
+.vscode/
+.idea/
+
+# Cache and temporary files
+cache/
+*.cache
+.httr-oauth
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*~
+*.bak
+*.tmp
+*.swp
