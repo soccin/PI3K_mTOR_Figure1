@@ -75,7 +75,10 @@ create_amplification_plot <- function(amp_data, genome_range) {
   ggplot(amp_data, aes(gPos, 10^(log10_q_value))) +
     geom_step(color = "darkred") +
     theme_light() +
-    scale_y_log10(expand = c(0, 0, 0.01, 0)) +
+    scale_y_log10(
+      expand = c(0, 0, 0.01, 0),
+      labels = function(x) parse(text = paste0("10^", -round(log10(x), 1)))
+    ) +
     coord_flip(clip = "off") +
     scale_x_reverse(limits = genome_range, expand = c(0, 0, 0, 0)) +
     theme(
