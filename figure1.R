@@ -77,6 +77,7 @@ create_amplification_plot <- function(amp_data, genome_range) {
     theme_light() +
     scale_y_log10(
       expand = c(0, 0, 0.01, 0),
+      breaks = scales::breaks_log(n = 6, base = 10),
       labels = function(x) parse(text = paste0("10^", -round(log10(x), 1)))
     ) +
     coord_flip(clip = "off") +
