@@ -6,6 +6,8 @@ library(patchwork)
 source("R/load_gistic_data.R")
 source("R/utils.R")
 source("R/plot_gistic.R")
+source("R/load_genome_info.R")
+
 
 # Configuration constants
 OUTPUT_FILE <- paste0("fig1_", get_git_label(), ".pdf")
@@ -70,9 +72,8 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
 
 
 # Main execution
-main <- function() {
+main <- function(args) {
   # Parse command line arguments
-  args <- commandArgs(trailingOnly = TRUE)
 
   if (length(args) < 1) {
     cat("Usage: Rscript figure1.R <GISTIC_FILE> [PEAKS_FILE]\n")
@@ -105,7 +106,9 @@ main <- function() {
   create_figure1(gistic_file, peaks_file)
 }
 
+argv <- commandArgs(trailingOnly = TRUE)
+
 # Run if script is executed directly
 if (sys.nframe() == 0) {
-  main()
+  main(argv)
 }
