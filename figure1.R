@@ -132,12 +132,22 @@ main <- function(argv) {
     peaks_file <- NULL
   }
 
+  # Generate output filename based on TITLE
+  if (TITLE != "") {
+    # Sanitize TITLE for filename (replace spaces and special chars with underscores)
+    clean_title <- gsub("[^A-Za-z0-9]", "_", TITLE)
+    output_file <- paste0("fig1_", clean_title, "_", get_git_label(), ".pdf")
+  } else {
+    output_file <- OUTPUT_FILE
+  }
+
   cat("Processing with:\n")
   cat("  Title:      ", ifelse(TITLE == "", "(none)", TITLE), "\n")
   cat("  GISTIC file:", gistic_file, "\n")
   cat("  Peaks file: ", ifelse(is.null(peaks_file), "(none)", peaks_file), "\n")
+  cat("  Output file:", output_file, "\n")
 
-  create_figure1(gistic_file, peaks_file, TITLE)
+  create_figure1(gistic_file, peaks_file, TITLE, output_file)
 }
 
 argv <- commandArgs(trailingOnly = TRUE)
