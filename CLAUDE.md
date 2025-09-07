@@ -95,3 +95,78 @@ The code is now organized into clean, modular functions:
 - Keep codebase clean to avoid version control noise
 - Apply to all R scripts, documentation, and text files
 - CAUTION: Use precise whitespace removal to avoid truncating legitimate text
+
+## R Code Quality Guidelines
+
+### Core Philosophy: Clarity Over Compliance
+- **Human comprehension first**: Code should tell a clear story to humans
+- **Style serves clarity**: Formatting rules help readability, not hinder it
+- **Simple over sophisticated**: Use the simplest construct that accomplishes the goal
+
+### 1. Prefer Clear Logic Flow
+```r
+# GOOD: Linear, obvious progression
+data %>%
+  read_tsv() %>%
+  clean_names() %>%
+  filter(condition) %>%
+  mutate(new_col = transformation) %>%
+  select(final_columns)
+
+# AVOID: Complex nested operations that require mental parsing
+data %>% mutate(coords = map(.[[4]], complex_parser))
+```
+
+### 2. Use Meaningful Names Throughout
+- Function names should describe what they do: `parse_peak_strings()` not `extract_coords()`
+- Variable names should be immediately clear: `lesions_file` not `input_path`
+- Avoid cryptic references like `.[[4]]` - use named columns
+
+### 3. Keep Functions Focused and Simple
+- One clear purpose per function
+- Minimal abstraction unless there's real benefit
+- Prefer obvious implementations over "clever" ones
+
+### 4. Minimize Cognitive Load
+- Avoid introducing multiple new concepts simultaneously
+- Don't add error handling/validation unless actually needed
+- Keep the main logic visible, not buried in abstractions
+- Progressive complexity: start simple, add only when necessary
+
+### 5. Documentation Should Clarify, Not Obscure
+- Use standard roxygen2 documentation for all functions (@param, @return)
+- Brief comments for complex logic only
+- Don't document obvious operations
+- Function documentation should be concise and purpose-focused
+
+### 6. Tidyverse Usage Guidelines
+- Use `|>` (native pipe) over `%>%` (magrittr) for R compatibility unless the specific code involved needs the advanced functionality of `%>%`. For example:
+  ```r
+  y = x %>% split(.$group)
+  ```
+  does not work with `|>` so it needs to stay with `%>%`. It is ok to mix the two but only if needed.
+- Prefer standard dplyr verbs over complex functional programming constructs
+- Use `select()`, `filter()`, `mutate()` over base R equivalents for consistency
+- Avoid overly functional approaches (excessive `map()`, `purrr`) when simple solutions exist
+
+### 7. Error Handling Philosophy
+- Add error handling only when failure is likely or consequences are severe
+- Use simple checks rather than comprehensive validation for internal functions
+- Fail fast with clear messages rather than defensive programming everywhere
+
+### 8. Code Organization
+- Place utility functions near where they're used
+- Keep related operations together
+- Use clear section breaks only when they aid comprehension
+- Avoid excessive abstraction layers
+
+### Anti-Patterns to Avoid
+- Over-documentation that obscures simple logic
+- Complex functional programming when procedural is clearer
+- Premature abstraction and generalization
+- Defensive programming for every edge case
+- "Clever" code that requires mental decoding
+
+### The Test: Can a collaborator understand this code in 30 seconds?
+If not, it's probably too complex regardless of how "correct" the style is.
+- Stop adding trailing white space when you edit R code
