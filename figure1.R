@@ -7,6 +7,7 @@ source("R/load_gistic_data.R")
 source("R/utils.R")
 source("R/plot_gistic.R")
 source("R/load_genome_info.R")
+source("R/load_gistic_peaks.R")
 
 
 # Configuration constants
@@ -28,13 +29,7 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
 
   # Load GISTIC amplification data
   gistic_data <- load_gistic_data(gistic_file)
-  amp_data <- gistic_data$Amp |>
-    arrange(desc(log10_q_value)) |>
-    mutate(
-      Label = ifelse(row_number() < TOP_PEAKS_COUNT,
-                     sprintf("P%02d", row_number()), "")
-    ) |>
-    arrange(gPos)
+  amp_data=gistic_data$Amp
 
   # Load and process peak labels
   if (is.null(peaks_file) || !file.exists(peaks_file)) {
@@ -61,13 +56,38 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
   }
 
   # Calculate genome range for plotting
-  genome_range <- rev(range(c(peak_labels$gPos, amp_data$gPos)))
+  #genome_range <- rev(range(c(peak_labels$gPos, amp_data$gPos)))
+  lastChrom=hg19_gistic %>% tail(1)
+  genome_range=c(lastChrom$g_offset+lastChrom$len,0)
 
   list(
     amp_data = amp_data,
     peak_labels = peak_labels,
     genome_range = genome_range
   )
+}
+
+#' Create and save Figure 1
+#'
+#' @param gistic_file Path to GISTIC results file (mandatory)
+#' @param peaks_file Path to peaks CSV file (optional)
+#' @param output_file Path to output PDF file
+create_figure1 <- function(gistic_file, peaks_file = NULL, output_file = OUTPUT_FILE) {
+  data <- load_and_process_data(gistic_file, peaks_file)
+
+  # Create individual plots
+  label_plot <- create_label_plot(data$peak_labels, data$genome_range)
+  amp_plot <- create_amplification_plot(data$amp_data, data$genome_range)
+
+  # Combine plots using patchwork
+  combined_plot <- label_plot | amp_plot
+
+  # Save to PDF
+  pdf(file = output_file, height = PLOT_HEIGHT, width = PLOT_WIDTH)
+  print(combined_plot)
+  dev.off()
+
+  message("Figure 1 saved to: ", output_file)
 }
 
 

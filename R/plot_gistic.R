@@ -5,29 +5,6 @@ library(ggplot2)
 library(ggrepel)
 library(patchwork)
 
-#' Create and save Figure 1
-#'
-#' @param gistic_file Path to GISTIC results file (mandatory)
-#' @param peaks_file Path to peaks CSV file (optional)
-#' @param output_file Path to output PDF file
-create_figure1 <- function(gistic_file, peaks_file = NULL, output_file = OUTPUT_FILE) {
-  data <- load_and_process_data(gistic_file, peaks_file)
-
-  # Create individual plots
-  label_plot <- create_label_plot(data$peak_labels, data$genome_range)
-  amp_plot <- create_amplification_plot(data$amp_data, data$genome_range)
-
-  # Combine plots using patchwork
-  combined_plot <- label_plot | amp_plot
-
-  # Save to PDF
-  pdf(file = output_file, height = PLOT_HEIGHT, width = PLOT_WIDTH)
-  print(combined_plot)
-  dev.off()
-
-  message("Figure 1 saved to: ", output_file)
-}
-
 #' Create amplification step plot
 #'
 #' @param amp_data Data frame with amplification data
