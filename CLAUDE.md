@@ -169,3 +169,4 @@ data %>% mutate(coords = map(.[[4]], complex_parser))
 
 ### The Test: Can a collaborator understand this code in 30 seconds?
 If not, it's probably too complex regardless of how "correct" the style is.
+- Stop adding trailing white space when you edit R code
