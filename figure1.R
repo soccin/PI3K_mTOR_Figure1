@@ -72,12 +72,12 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
 #' @param gistic_file Path to GISTIC results file (mandatory)
 #' @param peaks_file Path to peaks CSV file (optional)
 #' @param output_file Path to output PDF file
-create_figure1 <- function(gistic_file, peaks_file = NULL, output_file = OUTPUT_FILE) {
+create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE="", output_file = OUTPUT_FILE) {
   data <- load_and_process_data(gistic_file, peaks_file)
 
   # Create individual plots
   label_plot <- create_label_plot(data$peak_labels, data$genome_range)
-  amp_plot <- create_amplification_plot(data$amp_data, data$genome_range)
+  amp_plot <- create_amplification_plot(data$amp_data, data$genome_range, TITLE)
 
   # Combine plots using patchwork
   combined_plot <- label_plot | amp_plot
@@ -95,13 +95,25 @@ create_figure1 <- function(gistic_file, peaks_file = NULL, output_file = OUTPUT_
 main <- function(args) {
   # Parse command line arguments
 
+  # Initialize TITLE variable
+  TITLE <<- ""
+
+  # Check for TITLE parameter and remove from args
+  title_args <- grep("^TITLE=", args)
+  if (length(title_args) > 0) {
+    title_arg <- args[title_args[1]]
+    TITLE <<- sub("^TITLE=", "", title_arg)
+    args <- args[-title_args]
+  }
+
   if (length(args) < 1) {
-    cat("Usage: Rscript figure1.R <GISTIC_FILE> [PEAKS_FILE]\n")
+    cat("Usage: Rscript figure1.R [TITLE=<title>] <GISTIC_FILE> [PEAKS_FILE]\n")
+    cat("  TITLE:       Optional title parameter (e.g., TITLE=iClust1)\n")
     cat("  GISTIC_FILE: Path to GISTIC results file (mandatory)\n")
     cat("  PEAKS_FILE:  Path to peaks CSV file (optional)\n")
     cat("\nExample:\n")
     cat("  Rscript figure1.R iClust_1_scores.gistic\n")
-    cat("  Rscript figure1.R iClust_1_scores.gistic iClust1Peaks.csv\n")
+    cat("  Rscript figure1.R TITLE=iClust1 iClust_1_scores.gistic iClust1Peaks.csv\n")
     stop("Missing required argument: GISTIC_FILE", call. = FALSE)
   }
 
@@ -120,10 +132,11 @@ main <- function(args) {
   }
 
   cat("Processing with:\n")
+  cat("  Title:      ", ifelse(TITLE == "", "(none)", TITLE), "\n")
   cat("  GISTIC file:", gistic_file, "\n")
   cat("  Peaks file: ", ifelse(is.null(peaks_file), "(none)", peaks_file), "\n")
 
-  create_figure1(gistic_file, peaks_file)
+  create_figure1(gistic_file, peaks_file, TITLE)
 }
 
 argv <- commandArgs(trailingOnly = TRUE)

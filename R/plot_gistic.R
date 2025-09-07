@@ -10,9 +10,18 @@ library(patchwork)
 #' @param amp_data Data frame with amplification data
 #' @param genome_range Numeric vector with genome plotting range
 #' @return ggplot object
-create_amplification_plot <- function(amp_data, genome_range) {
-  ggplot(amp_data, aes(gPos, 10^(log10_q_value))) +
-    geom_step(color = "darkred") +
+create_amplification_plot <- function(amp_data, genome_range, title="") {
+  if(title=="") {
+    title="Amplifiction"
+  } else {
+    title=paste(title,"Amplifiction")
+  }
+  create_gistic_Q_plot(amp_data,genome_range,"darkred") + labs(title=title)
+}
+
+create_gistic_Q_plot <- function(data, genome_range, color) {
+  ggplot(data, aes(gPos, 10^(log10_q_value))) +
+    geom_step(color = color) +
     theme_light() +
     scale_y_log10(
       expand = c(0, 0, 0.01, 0),
