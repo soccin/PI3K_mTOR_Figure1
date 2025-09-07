@@ -17,6 +17,4 @@ load_gistic_data <- function(gfile) {
     arrange(gPos) |>
     select(type, chromosome, gPos, log10_q_value) %>%
     split(.$type)
-
 }
-
