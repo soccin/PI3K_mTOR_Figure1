@@ -29,30 +29,27 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
 
   # Load GISTIC amplification data
   gistic_data <- load_gistic_data(gistic_file)
-  amp_data=gistic_data$Amp
 
   # Load and process peak labels
   if (is.null(peaks_file) || !file.exists(peaks_file)) {
     # Create empty tibble with appropriate columns if no peaks file
-    peak_labels <- tibble(
+    tbl <- tibble(
       gPos = numeric(0),
       Y = numeric(0),
       Label = character(0),
       q_values = numeric(0),
       Type = character()
     )
+    peak_labels=list(Amp=tbl,Del=tbl)
   } else {
-    peak_labels <- read_csv(peaks_file, show_col_types = FALSE) |>
-      select(chromosome, pos, Label = descriptor, everything()) |>
-      mutate(chromosome = as.character(chromosome)) |>
-      left_join(hg19, by = "chromosome") |>
-      mutate(
-        gPos = pos + g_offset,
-        Y = 1
-      ) |>
-      select(gPos, Y, Label, q_values) |>
+    peak_labels <- load_gistic_peaks(peaks_file) |>
+      left_join(hg19) |>
+      mutate(gPos=pos+g_offset,Y=1) |>
+      select(gPos,Y,Label=descriptor,q_values,type) |>
       arrange(gPos) |>
-      filter(q_values < Q_VALUE_THRESHOLD)
+      filter(q_values < Q_VALUE_THRESHOLD) |>
+      mutate(type=factor(type,levels=c("Amp","Del"))) %>%
+      split(.$type)
   }
 
   # Calculate genome range for plotting
@@ -61,7 +58,7 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
   genome_range=c(lastChrom$g_offset+lastChrom$len,0)
 
   list(
-    amp_data = amp_data,
+    gistic_data = gistic_data,
     peak_labels = peak_labels,
     genome_range = genome_range
   )
@@ -76,15 +73,20 @@ create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE="", output_file
   data <- load_and_process_data(gistic_file, peaks_file)
 
   # Create individual plots
-  label_plot <- create_label_plot(data$peak_labels, data$genome_range)
-  amp_plot <- create_amplification_plot(data$amp_data, data$genome_range, TITLE)
+  amp_label_plot <- create_label_plot(data$peak_labels$Amp, data$genome_range)
+  amp_plot <- create_amplification_plot(data$gistic_data$Amp, data$genome_range, TITLE)
+
+  del_label_plot <- create_label_plot(data$peak_labels$Del, data$genome_range)
+  del_plot <- create_deletion_plot(data$gistic_data$Del, data$genome_range, TITLE)
 
   # Combine plots using patchwork
-  combined_plot <- label_plot | amp_plot
+  combined_amp_plot <- amp_label_plot | amp_plot
+  combined_del_plot <- del_label_plot | del_plot
 
   # Save to PDF
   pdf(file = output_file, height = PLOT_HEIGHT, width = PLOT_WIDTH)
-  print(combined_plot)
+  print(combined_amp_plot)
+  print(combined_del_plot)
   dev.off()
 
   message("Figure 1 saved to: ", output_file)
@@ -92,21 +94,21 @@ create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE="", output_file
 
 
 # Main execution
-main <- function(args) {
+main <- function(argv) {
   # Parse command line arguments
 
   # Initialize TITLE variable
   TITLE <<- ""
 
-  # Check for TITLE parameter and remove from args
-  title_args <- grep("^TITLE=", args)
-  if (length(title_args) > 0) {
-    title_arg <- args[title_args[1]]
+  # Check for TITLE parameter and remove from argv
+  title_argv <- grep("^TITLE=", argv)
+  if (length(title_argv) > 0) {
+    title_arg <- argv[title_argv[1]]
     TITLE <<- sub("^TITLE=", "", title_arg)
-    args <- args[-title_args]
+    argv <- argv[-title_argv]
   }
 
-  if (length(args) < 1) {
+  if (length(argv) < 1) {
     cat("Usage: Rscript figure1.R [TITLE=<title>] <GISTIC_FILE> [PEAKS_FILE]\n")
     cat("  TITLE:       Optional title parameter (e.g., TITLE=iClust1)\n")
     cat("  GISTIC_FILE: Path to GISTIC results file (mandatory)\n")
@@ -117,8 +119,8 @@ main <- function(args) {
     stop("Missing required argument: GISTIC_FILE", call. = FALSE)
   }
 
-  gistic_file <- args[1]
-  peaks_file <- if (length(args) >= 2) args[2] else NULL
+  gistic_file <- argv[1]
+  peaks_file <- if (length(argv) >= 2) argv[2] else NULL
 
   # Check if mandatory file exists
   if (!file.exists(gistic_file)) {
