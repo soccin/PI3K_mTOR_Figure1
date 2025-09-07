@@ -5,11 +5,11 @@
 #' Parse peak coordinate strings into separate columns
 #'
 #' @param ss Character vector of genomic coordinate strings in format "chr1:123-456"
-#' @return Tibble with columns: chrom, start, end
+#' @return Tibble with columns: chromosome, start, end
 parse_peak_strings <- function(ss) {
   str_extract(ss, "chr([^:]+):(\\d+)-(\\d+)", group = c(1, 2, 3)) |>
     as_tibble(.name_repair = "minimal") |>
-    rename(chrom = 1, start = 2, end = 3)
+    rename(chromosome = 1, start = 2, end = 3)
 }
 
 #' Load GISTIC peak data from lesions file
@@ -34,6 +34,8 @@ load_gistic_peaks <- function(lesions_file) {
     unnest(coor) |>
     type_convert() |>
     mutate(pos=floor((start+end)/2)) |>
+    mutate(chromosome=as.character(chromosome)) |>
+    mutate(type=ifelse(type=="Amplification","Amp","Del")) |>
     select(type, descriptor, q_values:end,pos,unique_name)
 }
 
