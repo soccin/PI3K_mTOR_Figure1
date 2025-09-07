@@ -1,5 +1,7 @@
 # PI3K/mTOR Figure 1: GISTIC Copy Number Analysis
 
+**Version**: v1.0.1
+
 [![GitHub](https://img.shields.io/badge/GitHub-soccin%2FPI3K__mTOR__Figure1-blue)](https://github.com/soccin/PI3K_mTOR_Figure1)
 
 This repository generates **Figure 1** for the PI3K/mTOR manuscript, visualizing genomic copy number alterations using GISTIC (Genomic Identification of Significant Targets in Cancer) analysis results. The figure displays both amplifications and deletions across the human genome with publication-quality formatting.
