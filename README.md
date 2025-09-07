@@ -1,6 +1,6 @@
 # PI3K/mTOR Figure 1: GISTIC Copy Number Analysis
 
-**Version**: v1.0.1
+**Version**: v1.0.2
 
 [![GitHub](https://img.shields.io/badge/GitHub-soccin%2FPI3K__mTOR__Figure1-blue)](https://github.com/soccin/PI3K_mTOR_Figure1)
 
