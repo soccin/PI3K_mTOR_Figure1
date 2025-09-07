@@ -17,7 +17,7 @@
 #' }
 get_git_label <- function() {
   # Get current branch name (first branch in list is typically current)
-  git_branch <- names(git2r::branches())[1]
+  git_branch <- git2r::repository_head()$name
 
   # Get all available git tags
   git_tags <- names(git2r::tags())
@@ -34,8 +34,8 @@ get_git_label <- function() {
 
   # Combine components with hyphens for readability
   if(git_branch=="master") {
-    paste0(git_tag)
+    return(paste0(git_tag))
   } else {
-    paste0(git_tag, "-", git_branch, "-", git_commit)
+    return(paste0(git_tag, "-", git_branch, "-", git_commit))
   }
 }
