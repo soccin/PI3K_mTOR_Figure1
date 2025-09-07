@@ -33,5 +33,9 @@ get_git_label <- function() {
   git_commit <- substr(git2r::commits()[[1]][1]$sha, 1, 8)
 
   # Combine components with hyphens for readability
-  paste0(git_tag, "-", git_branch, "-", git_commit)
+  if(git_branch=="master") {
+    paste0(git_tag)
+  } else {
+    paste0(git_tag, "-", git_branch, "-", git_commit)
+  }
 }
