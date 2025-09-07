@@ -1,7 +1,6 @@
 # Load GISTIC peak data from lesions file
 # Extracts copy number alteration peaks with coordinates and q-values
 
-
 #' Parse peak coordinate strings into separate columns
 #'
 #' @param ss Character vector of genomic coordinate strings in format "chr1:123-456"
@@ -18,34 +17,36 @@ parse_peak_strings <- function(ss) {
 #' and extracts peak coordinates and q-values.
 #'
 #' @param lesions_file Path to GISTIC lesions file
-#' @return Tibble with columns: type, descriptor, q_values, chrom, start, end, pos, unique_name
+#' @return Tibble with columns: type, descriptor, q_values, chromosome, start, end, pos, unique_name
 load_gistic_peaks <- function(lesions_file) {
   read_tsv(lesions_file,
            show_col_types = FALSE,
            col_types = cols(.default = "c")) |>
     janitor::clean_names() |>
-    rename_at(vars(matches("^residual_")), ~ "residual_q_values") |>
+    rename_with(~ "residual_q_values", matches("^residual_")) |>
     select(unique_name:residual_q_values,
            -wide_peak_limits,
            -region_limits) |>
-    filter(grepl(" - CN", unique_name)) |>
+    filter(str_detect(unique_name, " - CN")) |>
     mutate(type = gsub(" .*", "", unique_name)) |>
     mutate(coor = parse_peak_strings(peak_limits)) |>
     unnest(coor) |>
     type_convert() |>
-    mutate(pos=floor((start+end)/2)) |>
-    mutate(chromosome=as.character(chromosome)) |>
-    mutate(type=ifelse(type=="Amplification","Amp","Del")) |>
-    select(type, descriptor, q_values:end,pos,unique_name)
+    mutate(
+      pos = floor((start + end) / 2),
+      chromosome = as.character(chromosome),
+      type = ifelse(type == "Amplification", "Amp", "Del")
+    ) |>
+    select(type, descriptor, q_values:end, pos, unique_name)
 }
 
-# like if __name__=="__main__"
+# Main execution block (like if __name__ == "__main__" in Python)
 if (!interactive() && sys.nframe() == 0) {
   suppressPackageStartupMessages({
     library(tidyverse)
     library(readr)
   })
   lesions_file <- "all_lesions.conf_99.txt"
-  peakTbl <- load_gistic_peaks(lesions_file)
-  print(str(peakTbl))
+  peak_table <- load_gistic_peaks(lesions_file)
+  print(str(peak_table))
 }

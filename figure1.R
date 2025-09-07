@@ -9,7 +9,6 @@ source("R/plot_gistic.R")
 source("R/load_genome_info.R")
 source("R/load_gistic_peaks.R")
 
-
 # Configuration constants
 OUTPUT_FILE <- paste0("fig1_", get_git_label(), ".pdf")
 Q_VALUE_THRESHOLD <- 0.1
@@ -40,22 +39,21 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
       q_values = numeric(0),
       Type = character()
     )
-    peak_labels=list(Amp=tbl,Del=tbl)
+    peak_labels <- list(Amp = tbl, Del = tbl)
   } else {
     peak_labels <- load_gistic_peaks(peaks_file) |>
       left_join(hg19) |>
-      mutate(gPos=pos+g_offset,Y=1) |>
-      select(gPos,Y,Label=descriptor,q_values,type) |>
+      mutate(gPos = pos + g_offset, Y = 1) |>
+      select(gPos, Y, Label = descriptor, q_values, type) |>
       arrange(gPos) |>
       filter(q_values < Q_VALUE_THRESHOLD) |>
-      mutate(type=factor(type,levels=c("Amp","Del"))) %>%
+      mutate(type = factor(type, levels = c("Amp", "Del"))) %>%
       split(.$type)
   }
 
   # Calculate genome range for plotting
-  #genome_range <- rev(range(c(peak_labels$gPos, amp_data$gPos)))
-  lastChrom=hg19_gistic %>% tail(1)
-  genome_range=c(lastChrom$g_offset+lastChrom$len,0)
+  last_chrom <- hg19_gistic |> tail(1)
+  genome_range <- c(last_chrom$g_offset + last_chrom$len, 0)
 
   list(
     gistic_data = gistic_data,
@@ -68,8 +66,9 @@ load_and_process_data <- function(gistic_file, peaks_file = NULL) {
 #'
 #' @param gistic_file Path to GISTIC results file (mandatory)
 #' @param peaks_file Path to peaks CSV file (optional)
+#' @param TITLE Optional title prefix for plots
 #' @param output_file Path to output PDF file
-create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE="", output_file = OUTPUT_FILE) {
+create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE = "", output_file = OUTPUT_FILE) {
   data <- load_and_process_data(gistic_file, peaks_file)
 
   # Create individual plots
