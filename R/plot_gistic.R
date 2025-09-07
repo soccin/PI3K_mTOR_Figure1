@@ -12,11 +12,20 @@ library(patchwork)
 #' @return ggplot object
 create_amplification_plot <- function(amp_data, genome_range, title="") {
   if(title=="") {
-    title="Amplifiction"
+    title="Amplification"
   } else {
-    title=paste(title,"Amplifiction")
+    title=paste(title,"Amplification")
   }
   create_gistic_Q_plot(amp_data,genome_range,"darkred") + labs(title=title)
+}
+
+create_deletion_plot <- function(del_data, genome_range, title="") {
+  if(title=="") {
+    title="Deletion"
+  } else {
+    title=paste(title,"Deletion")
+  }
+  create_gistic_Q_plot(del_data,genome_range,"darkblue") + labs(title=title)
 }
 
 create_gistic_Q_plot <- function(data, genome_range, color) {
@@ -26,7 +35,7 @@ create_gistic_Q_plot <- function(data, genome_range, color) {
     filter(chromosome %in% 1:22) |>
     mutate(
       xmin = g_offset, xmax = g_offset + len,
-      ymin = data_range[1], ymax = data_range[2],
+      ymin = data_range[1], ymax = (10^0.1)*data_range[2],
       color = factor((row_number() - 1) %% 2 + 1)
     )
 
@@ -36,12 +45,12 @@ create_gistic_Q_plot <- function(data, genome_range, color) {
       data = chrom_panels,
       aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = color),
       inherit.aes = FALSE,
-      alpha = 0.2
+      alpha = 0.35
     ) +
-    scale_fill_manual(values=c("white","grey75"),guide="none") +
+    scale_fill_manual(values=c("white","grey65"),guide="none") +
     geom_step(color = color) +
     scale_y_log10(
-      expand = c(0, 0, 0.01, 0),
+      expand = c(0, 0, 0, 0),
       breaks = scales::breaks_log(n = 6, base = 10),
       labels = function(x) parse(text = paste0("10^", -round(log10(x), 1)))
     ) +
@@ -65,6 +74,7 @@ create_gistic_Q_plot <- function(data, genome_range, color) {
 #' @return ggplot object
 create_label_plot <- function(peak_labels, genome_range) {
   peak_labels |>
+    slice_min(q_values,n=30) |>
     arrange(gPos) |>
     ggplot(aes(gPos, Y, label = Label)) +
     theme_void() +
