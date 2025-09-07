@@ -18,20 +18,20 @@
 get_git_label <- function() {
   # Get current branch name (first branch in list is typically current)
   git_branch <- names(git2r::branches())[1]
-  
+
   # Get all available git tags
   git_tags <- names(git2r::tags())
-  
+
   # Select most recent tag or fallback to "no-tag"
   git_tag <- if (length(git_tags) > 0) {
     git_tags[length(git_tags)]  # Last tag is most recent
   } else {
     "no-tag"
   }
-  
+
   # Get short commit SHA (8 characters for uniqueness + readability)
   git_commit <- substr(git2r::commits()[[1]][1]$sha, 1, 8)
-  
+
   # Combine components with hyphens for readability
   paste0(git_tag, "-", git_branch, "-", git_commit)
 }

@@ -1,11 +1,3 @@
-suppressPackageStartupMessages({
-  library(dplyr)
-  library(readr)
-  library(janitor)
-})
-
-source(file.path(get_script_dir(), "R/load_genome_info.R"))
-
 #' Load and process GISTIC data
 #'
 #' Reads GISTIC amplification/deletion results and converts genomic coordinates
@@ -17,13 +9,14 @@ source(file.path(get_script_dir(), "R/load_genome_info.R"))
 load_gistic_data <- function(gfile) {
   hg19 <- load_genome_info()
 
-  processed_data <- read_tsv(gfile, show_col_types = FALSE, progress = FALSE) |>
-    clean_names() |>
+  read_tsv(gfile, show_col_types = FALSE, progress = FALSE) |>
+    janitor::clean_names() |>
     mutate(chromosome = as.character(chromosome)) |>
     left_join(hg19, by = "chromosome") |>
     mutate(gPos = start + g_offset) |>
-    select(type, chromosome, gPos, log10_q_value)
+    arrange(gPos) |>
+    select(type, chromosome, gPos, log10_q_value) %>%
+    split(.$type)
 
-  split(processed_data, processed_data$type)
 }
 
