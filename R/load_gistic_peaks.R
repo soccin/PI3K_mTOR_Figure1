@@ -37,7 +37,8 @@ load_gistic_peaks <- function(lesions_file) {
       chromosome = as.character(chromosome),
       type = ifelse(type == "Amplification", "Amp", "Del")
     ) |>
-    select(type, descriptor, q_values:end, pos, unique_name)
+    select(type, descriptor, q_values:end, pos, unique_name) |>
+    distinct(type,descriptor,.keep_all=T)
 }
 
 # Main execution block (like if __name__ == "__main__" in Python)
