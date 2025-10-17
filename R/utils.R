@@ -19,6 +19,9 @@ get_git_label <- function() {
   # Get current branch name (first branch in list is typically current)
   git_branch <- git2r::repository_head()$name
 
+  # Replace forward slashes with hyphens for valid filenames
+  git_branch <- gsub("/", "-", git_branch)
+
   # Get all available git tags
   git_tags <- names(git2r::tags())
 
