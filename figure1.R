@@ -75,12 +75,12 @@ create_figure1 <- function(gistic_file, peaks_file = NULL, TITLE = "", output_fi
   amp_label_plot <- create_label_plot(data$peak_labels$Amp, data$genome_range)
   amp_plot <- create_amplification_plot(data$gistic_data$Amp, data$genome_range, TITLE)
 
-  del_label_plot <- create_label_plot(data$peak_labels$Del, data$genome_range)
+  del_label_plot <- create_label_plot_reversed(data$peak_labels$Del, data$genome_range)
   del_plot <- create_deletion_plot(data$gistic_data$Del, data$genome_range, TITLE)
 
   # Combine plots using patchwork
   combined_amp_plot <- amp_label_plot | amp_plot
-  combined_del_plot <- del_label_plot | del_plot
+  combined_del_plot <- del_plot | del_label_plot
 
   # Save to PDF
   pdf(file = output_file, height = PLOT_HEIGHT, width = PLOT_WIDTH)

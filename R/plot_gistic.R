@@ -154,6 +154,7 @@ create_label_plot_reversed <- function(peak_labels, genome_range) {
   peak_labels |>
     slice_min(q_values, n = 30) |>
     arrange(gPos) |>
+    mutate(Y = 0) |>
     ggplot(aes(gPos, Y, label = Label)) +
     theme_void() +
     geom_text_repel(
@@ -166,10 +167,10 @@ create_label_plot_reversed <- function(peak_labels, genome_range) {
       seed = 42,
       segment.color = "black",
       segment.size = 0.3,
-      ylim = c(0, 0.95)         # With reversed y-axis, this positions labels on right
+      ylim = c(0.05, 1)
     ) +
     coord_flip(clip = "off") +
     scale_x_reverse(limits = genome_range, expand = c(0, 0, 0, 0)) +
-    scale_y_reverse(limits = c(0, 1), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
     theme(plot.margin = margin(10, 0, 0, 0, "pt"))
 }
