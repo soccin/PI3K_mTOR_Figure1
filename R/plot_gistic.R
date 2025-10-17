@@ -120,7 +120,7 @@ create_label_plot <- function(peak_labels, genome_range) {
       min.segment.length = 0,
       segment.curvature = -1e-20,
       max.iter = 10000,         # High iteration count for better positioning
-      max.time = 3,             # More time to optimize label placement
+      max.time = 10,             # More time to optimize label placement
       force = 1.2,
       seed = 42,                # Reproducible results
       segment.color = "black",
@@ -153,7 +153,7 @@ create_label_plot_reversed <- function(peak_labels, genome_range) {
       min.segment.length = 0,
       segment.curvature = -1e-20,
       max.iter = 10000,
-      max.time = 3,
+      max.time = 10,
       force = 1.2,
       seed = 42,
       segment.color = "black",

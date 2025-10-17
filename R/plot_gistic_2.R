@@ -66,7 +66,7 @@ gistic_q2_plot <- function(dq, genome_range) {
       color = "darkblue"
     ) +
     scale_y_log10(
-      expand = c(0.01, 0, 0.01, 0),
+      expand = c(0.005, 0, 0.005, 0),
       breaks = y_breaks,
       labels = function(x) parse(text = paste0("10^", -round(log10(x), 1))),
       sec.axis = sec_axis(
@@ -81,7 +81,7 @@ gistic_q2_plot <- function(dq, genome_range) {
       axis.text.y = element_blank(),
       axis.ticks = element_blank(),
       axis.title = element_blank(),
-      plot.margin = margin(10, 10, 0, 0, "pt"),
+      plot.margin = margin(0, 0, 0, 0, "pt"),
       panel.spacing = unit(0, "pt"),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank()
