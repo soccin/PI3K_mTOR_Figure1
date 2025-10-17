@@ -135,7 +135,7 @@ PLOT_WIDTH <- 8.5
 # Create individual plot components
 amp_labels <- create_label_plot(peak_labels$Amp, genome_range)
 del_labels <- create_label_plot_reversed(peak_labels$Del, genome_range)
-gistic_plot <- gistic_q2_plot(gistic_data, genome_range)
+gistic_plot <- gistic_q2_plot(gistic_data, genome_range) + ggtitle(TITLE)
 
 # Combine plots: amplification labels | GISTIC scores | deletion labels
 combined_plot <- amp_labels | gistic_plot | del_labels

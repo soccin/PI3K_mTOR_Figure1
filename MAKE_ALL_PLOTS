@@ -1,2 +1,2 @@
-#Rscript figure1b.R TITLE=iClust2 data/iClust_2_scores.gistic data/iClust_2_all_lesions.conf_99.txt
+Rscript figure1b.R TITLE=iClust2 data/iClust_2_scores.gistic data/iClust_2_all_lesions.conf_99.txt
 Rscript figure1b.R TITLE=iClust1 data/iClust_1_scores.gistic data/iClust_1_all_lesions.conf_99.txt
