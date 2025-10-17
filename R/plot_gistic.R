@@ -67,49 +67,40 @@ create_gistic_Q_plot <- function(data, genome_range, color) {
 
 #' Create GISTIC Q-value plot with reversed horizontal axis
 #'
-#' Same as create_gistic_Q_plot but with reversed y-axis direction.
-#' After coord_flip, this results in horizontal axis going from right (high values) to left (low values).
+#' Transparent overlay version designed to be superimposed on create_gistic_Q_plot.
+#' All backgrounds are transparent except for the step line.
+#' After coord_flip, horizontal axis goes from right (high values) to left (low values).
+#' Axis labels are positioned at the top of the plot.
 #'
 #' @param data Data frame with log10_q_value and gPos columns
 #' @param genome_range Numeric vector with genome plotting range
 #' @param color Color for the step plot line
-#' @return ggplot object
+#' @return ggplot object (transparent, suitable for overlay)
 create_gistic_Q_plot_reversed <- function(data, genome_range, color) {
-  data_range <- range(10^data$log10_q_value)
-  chrom_panels  <- load_genome_info() |>
-    filter(chromosome %in% 1:22) |>
-    mutate(
-      xmin = g_offset, xmax = g_offset + len,
-      ymin = data_range[1], ymax = (10^0.1) * data_range[2],
-      color = factor((row_number() - 1) %% 2 + 1)
-    )
-
   ggplot(data, aes(gPos, 10^(log10_q_value))) +
     theme_light() +
-    geom_rect(
-      data = chrom_panels,
-      aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = color),
-      inherit.aes = FALSE,
-      alpha = 0.35
-    ) +
-    scale_fill_manual(values = c("white", "grey65"), guide = "none") +
     geom_step(color = color) +
     scale_y_continuous(
       trans = scales::compose_trans("log10", "reverse"),
       expand = c(0, 0, 0, 0),
       breaks = scales::breaks_log(n = 6, base = 10),
-      labels = function(x) parse(text = paste0("10^", -round(log10(x), 1)))
+      labels = function(x) parse(text = paste0("10^", -round(log10(x), 1))),
+      position = "right"
     ) +
     coord_flip(clip = "off") +
     scale_x_reverse(limits = genome_range, expand = c(0, 0, 0, 0)) +
     theme(
+      axis.text.x.top = element_text(),
       axis.text.y = element_blank(),
       axis.ticks = element_blank(),
       axis.title = element_blank(),
       plot.margin = margin(10, 10, 0, 0, "pt"),
       panel.spacing = unit(0, "pt"),
-      panel.grid.major.y = element_blank(),
-      panel.grid.minor.y = element_blank()
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.background = element_rect(fill = "transparent", color = NA),
+      plot.background = element_rect(fill = "transparent", color = NA),
+      panel.border = element_blank()
     )
 }
 
